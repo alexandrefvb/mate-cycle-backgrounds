@@ -1,3 +1,5 @@
+#!/usr/bin/python3 -u
+
 '''
 Created on 15/02/2013
 
@@ -17,12 +19,15 @@ To advanced usage see help options executing:
 python cycle_backgrounds.py -h
 
 @author: Alexandre Fidelis Vieira Bitencourt
+@author: Sergi Casbas. Python3 compatibility & randomize function.
 '''
+
 import os
 import fnmatch
 
 from optparse import OptionParser
 from xml.dom.minidom import Document
+from random import shuffle
 
 def parse_args():
     parser = OptionParser()
@@ -37,15 +42,18 @@ def parse_args():
     parser.add_option('-o', '--output', dest='output',
                       help='background XML file name (defaults to background.xml)',
                       metavar="BACKGROUND_XML", default='background.xml')
+    parser.add_option('-r', '--random', dest='randomize', action="store_true",
+                      help='Automatically randomize file list (default false)',
+                      metavar="", default=False)
     args = parser.parse_args()
-    
+
     if args[0].dir is None:
-        print 'Error: Image directory is required.\n'
+        print ('Error: Image directory is required.\n')
         parser.print_help()
         return None
-    
+
     if not os.path.isdir(args[0].dir):
-        print 'Error: Invalid image directory.\n'
+        print ('Error: Invalid image directory.\n')
         parser.print_help()
         return None
 
@@ -59,13 +67,16 @@ def generate_xml(args):
             fnmatch.fnmatch(f, "*.png"):
             images.append(args.dir + os.path.sep + f)
     if len(images) == 0:
-        print 'Error: Image directory contains no images.\n'
+        print ('Error: Image directory contains no images.\n')
         return
-    
+
+    if args.randomize:
+        shuffle(images)
+
     doc = Document()
     background = doc.createElement('background')
     doc.appendChild(background)
-    
+
     # starttime
     starttime = doc.createElement('starttime')
     background.appendChild(starttime)
@@ -87,10 +98,10 @@ def generate_xml(args):
     second = doc.createElement('second')
     second.appendChild(doc.createTextNode('00'))
     starttime.appendChild(second)
-    
+
     # process images
     imgs = iter(images)
-    img = imgs.next()
+    img = next(imgs)
     try:
         while True:
             static = doc.createElement('static')
@@ -101,7 +112,7 @@ def generate_xml(args):
             f = doc.createElement('file')
             static.appendChild(f)
             f.appendChild(doc.createTextNode(img))
-            img2 = imgs.next()
+            img2 = next(imgs)
             transition = doc.createElement('transition')
             background.appendChild(transition)
             duration = doc.createElement('duration')
@@ -117,7 +128,7 @@ def generate_xml(args):
     except StopIteration:
         pass
 
-    f = open(args.dir + os.path.sep + args.output, 'w')    
+    f = open(args.dir + os.path.sep + args.output, 'w')
     f.write(doc.toprettyxml('    '))
     f.close()
 
