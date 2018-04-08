@@ -12,4 +12,4 @@ Basic usage:
 
 To advanced usage see help options executing:
 
-python cycle_backgrounds.py -h
+```python cycle_backgrounds.py -h``` or see the wiki
