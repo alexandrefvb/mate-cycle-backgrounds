@@ -121,10 +121,11 @@ def generate_xml(args):
             fro = doc.createElement('from')
             fro.appendChild(doc.createTextNode(img))
             transition.appendChild(fro)
+# so that the image does not transition to itself
+            img = img2
             to = doc.createElement('to')
             to.appendChild(doc.createTextNode(img))
             transition.appendChild(to)
-            img = img2
     except StopIteration:
         pass
 
