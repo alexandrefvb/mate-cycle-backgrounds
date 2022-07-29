@@ -122,7 +122,7 @@ def generate_xml(args):
             fro.appendChild(doc.createTextNode(img))
             transition.appendChild(fro)
             to = doc.createElement('to')
-            to.appendChild(doc.createTextNode(img))
+            to.appendChild(doc.createTextNode(img2))
             transition.appendChild(to)
             img = img2
     except StopIteration:
